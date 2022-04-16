@@ -151,6 +151,12 @@ llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Range &R) {
   return OS << R.start << '-' << R.end;
 }
 
+bool fromJSON(const llvm::json::Value &Params, Location &L,
+              llvm::json::Path P) {
+  llvm::json::ObjectMapper O(Params, P);
+  return O && O.map("uri", L.uri) && O.map("range", L.range);
+}
+
 llvm::json::Value toJSON(const Location &P) {
   return llvm::json::Object{
       {"uri", P.uri},
@@ -869,6 +875,8 @@ llvm::json::Value toJSON(const Command &C) {
 const llvm::StringLiteral CodeAction::QUICKFIX_KIND = "quickfix";
 const llvm::StringLiteral CodeAction::REFACTOR_KIND = "refactor";
 const llvm::StringLiteral CodeAction::INFO_KIND = "info";
+const llvm::StringLiteral CodeAction::SHOW_REFERENCES =
+    "clangd.action.showReferences";
 
 llvm::json::Value toJSON(const CodeAction &CA) {
   auto CodeAction = llvm::json::Object{{"title", CA.title}};
@@ -1698,5 +1706,36 @@ bool fromJSON(const llvm::json::Value &E, SymbolID &S, llvm::json::Path P) {
 }
 llvm::json::Value toJSON(const SymbolID &S) { return S.str(); }
 
+bool fromJSON(const llvm::json::Value &Params, CodeLensResolveData &R,
+              llvm::json::Path P) {
+  llvm::json::ObjectMapper O(Params, P);
+  return O && O.map("uri", R.uri);
+}
+
+llvm::json::Value toJSON(const CodeLensResolveData &P) {
+  llvm::json::Object O{{"uri", P.uri}};
+  return std::move(O);
+}
+
+llvm::json::Value toJSON(const CodeLensArgument &P) {
+  llvm::json::Object O{
+      {"uri", P.uri}, {"position", P.position}, {"locations", P.locations}};
+  return std::move(O);
+}
+
+bool fromJSON(const llvm::json::Value &Params, CodeLens &R,
+              llvm::json::Path P) {
+  llvm::json::ObjectMapper O(Params, P);
+  return O && O.map("range", R.range) && O.map("data", R.data);
+}
+
+llvm::json::Value toJSON(const CodeLens &C) {
+  llvm::json::Object O{{"range", C.range}};
+  if (C.command)
+    O["command"] = *C.command;
+  if (C.data)
+    O["data"] = *C.data;
+  return std::move(O);
+}
 } // namespace clangd
 } // namespace clang

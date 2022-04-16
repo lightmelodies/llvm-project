@@ -344,6 +344,11 @@ list<std::string> TweakList{
     CommaSeparated,
 };
 
+opt<bool> EnableCodeLens{
+    "code-lens", cat(Features), desc("Enable preview of CodeLens feature"),
+    init(true),  Hidden,
+};
+
 opt<unsigned> WorkerThreadsCount{
     "j",
     cat(Misc),
@@ -898,6 +903,7 @@ clangd accepts flags on the commandline, and in the CLANGD_FLAGS environment var
   Opts.StaticIndex = PAI.get();
   Opts.AsyncThreadsCount = WorkerThreadsCount;
   Opts.MemoryCleanup = getMemoryCleanupFunction();
+  Opts.CodeLens = EnableCodeLens;
 
   Opts.CodeComplete.IncludeIneligibleResults = IncludeIneligibleResults;
   Opts.CodeComplete.Limit = LimitResults;

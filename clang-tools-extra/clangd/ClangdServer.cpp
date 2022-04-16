@@ -8,6 +8,7 @@
 
 #include "ClangdServer.h"
 #include "CodeComplete.h"
+#include "CodeLens.h"
 #include "Config.h"
 #include "Diagnostics.h"
 #include "DumpAST.h"
@@ -410,7 +411,7 @@ ClangdServer::createConfiguredContextProvider(const config::Provider *Provider,
 
 void ClangdServer::removeDocument(PathRef File) {
   DraftMgr.removeDraft(File);
-  WorkScheduler->remove(File);
+  // WorkScheduler->remove(File);
 }
 
 void ClangdServer::codeComplete(PathRef File, Position Pos,
@@ -1102,6 +1103,31 @@ void ClangdServer::diagnostics(PathRef File, Callback<std::vector<Diag>> CB) {
       };
 
   WorkScheduler->runWithAST("Diagnostics", File, std::move(Action));
+}
+
+void ClangdServer::provideCodeLens(PathRef File, uint32_t Limit,
+                                   Callback<std::vector<CodeLens>> CB) {
+  auto Action = [CB = std::move(CB), File = File.str(), Limit,
+                 this](llvm::Expected<InputsAndAST> InpAST) mutable {
+    if (!InpAST)
+      return CB(InpAST.takeError());
+    CB(clangd::getDocumentCodeLens(InpAST->AST, Index, Limit, File));
+  };
+  WorkScheduler->runWithAST("DocumentCodeLens", File, std::move(Action),
+                            TUScheduler::InvalidateOnUpdate);
+}
+
+void ClangdServer::resolveCodeLens(const CodeLens &Params, uint32_t Limit,
+                                   Callback<CodeLens> CB) {
+  auto File = Params.data->uri;
+  auto Action = [CB = std::move(CB), File, Params, Limit,
+                 this](llvm::Expected<InputsAndAST> InpAST) mutable {
+    if (!InpAST)
+      return CB(InpAST.takeError());
+    CB(clangd::resolveCodeLens(InpAST->AST, Params, Limit, Index, File));
+  };
+  WorkScheduler->runWithAST("ResolveCodeLens", File, std::move(Action),
+                            TUScheduler::InvalidateOnUpdate);
 }
 
 llvm::StringMap<TUScheduler::FileStats> ClangdServer::fileStats() const {

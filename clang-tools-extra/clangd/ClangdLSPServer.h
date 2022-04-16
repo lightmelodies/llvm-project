@@ -176,6 +176,10 @@ private:
   void onCommandApplyTweak(const TweakArgs &, Callback<llvm::json::Value>);
   void onCommandApplyRename(const RenameParams &, Callback<llvm::json::Value>);
 
+  /// CodeLens
+  void onCodeLens(const CodeLensParams &, Callback<std::vector<CodeLens>>);
+  void onCodeLensResolve(const CodeLens &, Callback<CodeLens>);
+
   /// Outgoing LSP calls.
   LSPBinder::OutgoingMethod<ApplyWorkspaceEditParams,
                             ApplyWorkspaceEditResponse>

@@ -225,6 +225,7 @@ struct Location {
     return std::tie(LHS.uri, LHS.range) < std::tie(RHS.uri, RHS.range);
   }
 };
+bool fromJSON(const llvm::json::Value &, Location &, llvm::json::Path);
 llvm::json::Value toJSON(const Location &);
 llvm::raw_ostream &operator<<(llvm::raw_ostream &, const Location &);
 
@@ -1070,6 +1071,9 @@ struct CodeAction {
   const static llvm::StringLiteral QUICKFIX_KIND;
   const static llvm::StringLiteral REFACTOR_KIND;
   const static llvm::StringLiteral INFO_KIND;
+  /// This action should be implemented by client,
+  /// because we can not call 'editor.action.showReferences' directly.
+  const static llvm::StringLiteral SHOW_REFERENCES;
 
   /// The diagnostics that this code action resolves.
   std::optional<std::vector<Diagnostic>> diagnostics;
@@ -2019,6 +2023,33 @@ struct ASTNode {
 llvm::json::Value toJSON(const ASTNode &);
 llvm::raw_ostream &operator<<(llvm::raw_ostream &, const ASTNode &);
 
+/// https://microsoft.github.io/language-server-protocol/specification#textDocument_codeLens
+struct CodeLensResolveData {
+  std::string uri;
+};
+bool fromJSON(const llvm::json::Value &, CodeLensResolveData &,
+              llvm::json::Path);
+llvm::json::Value toJSON(const CodeLensResolveData &A);
+
+struct CodeLensArgument {
+  std::string uri;
+  Position position;
+  std::vector<Location> locations;
+};
+llvm::json::Value toJSON(const CodeLensArgument &A);
+
+struct CodeLensParams : DocumentSymbolParams {};
+
+struct CodeLens {
+  // CodeLens range.
+  Range range;
+  // CodeLens command.
+  std::optional<Command> command;
+  // CodeLens resolve data.
+  std::optional<CodeLensResolveData> data;
+};
+bool fromJSON(const llvm::json::Value &, CodeLens &, llvm::json::Path);
+llvm::json::Value toJSON(const CodeLens &);
 } // namespace clangd
 } // namespace clang
 
