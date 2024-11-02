@@ -23,6 +23,7 @@
 #include <__concepts/arithmetic.h>
 #include <__concepts/same_as.h>
 #include <__config>
+#include <__cstddef/ptrdiff_t.h>
 #include <__format/concepts.h>
 #include <__format/format_parse_context.h>
 #include <__format/formatter.h>
@@ -36,7 +37,6 @@
 #include <__utility/move.h>
 #include <__utility/unreachable.h>
 #include <cmath>
-#include <cstddef>
 
 #ifndef _LIBCPP_HAS_NO_LOCALIZATION
 #  include <__locale>
@@ -774,7 +774,15 @@ struct _LIBCPP_TEMPLATE_VIS formatter<double, _CharT> : public __formatter_float
 template <__fmt_char_type _CharT>
 struct _LIBCPP_TEMPLATE_VIS formatter<long double, _CharT> : public __formatter_floating_point<_CharT> {};
 
-#endif //_LIBCPP_STD_VER >= 20
+#  if _LIBCPP_STD_VER >= 23
+template <>
+inline constexpr bool enable_nonlocking_formatter_optimization<float> = true;
+template <>
+inline constexpr bool enable_nonlocking_formatter_optimization<double> = true;
+template <>
+inline constexpr bool enable_nonlocking_formatter_optimization<long double> = true;
+#  endif // _LIBCPP_STD_VER >= 23
+#endif   // _LIBCPP_STD_VER >= 20
 
 _LIBCPP_END_NAMESPACE_STD
 

@@ -35,6 +35,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 
@@ -64,6 +77,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 
@@ -98,6 +124,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 
@@ -127,6 +166,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 
@@ -160,6 +212,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 
@@ -189,6 +254,19 @@ target triple = "aarch64-unknown-linux-gnu"
 ; CHECK-NEXT: Successor(s): middle.block
 ; CHECK-EMPTY:
 ; CHECK-NEXT: middle.block:
+; CHECK-NEXT:   EMIT vp<[[CMP:%.+]]> = icmp eq ir<1024>, vp<[[VTC]]>
+; CHECK-NEXT:   EMIT branch-on-cond vp<[[CMP]]>
+; CHECK-NEXT: Successor(s): ir-bb<for.cond.cleanup>, scalar.ph
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.cond.cleanup>:
+; CHECK-NEXT: No successors
+; CHECK-EMPTY:
+; CHECK-NEXT: scalar.ph:
+; CHECK-NEXT: Successor(s): ir-bb<for.body>
+; CHECK-EMPTY:
+; CHECK-NEXT: ir-bb<for.body>:
+; CHECK-NEXT:   IR   %indvars.iv = phi i64 [ 0, %entry ], [ %indvars.iv.next, %for.body ]
+; CHECK:        IR   %exitcond = icmp eq i64 %indvars.iv.next, 1024
 ; CHECK-NEXT: No successors
 ; CHECK-NEXT: }
 

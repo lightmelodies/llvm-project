@@ -9,12 +9,10 @@
 #ifndef _LIBCPP___MEMORY_RESOURCE_SYNCHRONIZED_POOL_RESOURCE_H
 #define _LIBCPP___MEMORY_RESOURCE_SYNCHRONIZED_POOL_RESOURCE_H
 
-#include <__availability>
 #include <__config>
 #include <__memory_resource/memory_resource.h>
 #include <__memory_resource/pool_options.h>
 #include <__memory_resource/unsynchronized_pool_resource.h>
-#include <cstddef>
 #include <mutex>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)

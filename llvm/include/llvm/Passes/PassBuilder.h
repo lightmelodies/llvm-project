@@ -17,6 +17,7 @@
 
 #include "llvm/Analysis/CGSCCPassManager.h"
 #include "llvm/CodeGen/MachinePassManager.h"
+#include "llvm/CodeGen/RegAllocCommon.h"
 #include "llvm/IR/PassManager.h"
 #include "llvm/Passes/OptimizationLevel.h"
 #include "llvm/Support/Error.h"
@@ -24,8 +25,8 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Transforms/IPO/Inliner.h"
 #include "llvm/Transforms/IPO/ModuleInliner.h"
-#include "llvm/Transforms/Instrumentation.h"
 #include "llvm/Transforms/Scalar/LoopPassManager.h"
+#include <optional>
 #include <vector>
 
 namespace llvm {
@@ -244,8 +245,9 @@ public:
   /// optimization and code generation without any link-time optimization. It
   /// typically correspond to frontend "-O[123]" options for optimization
   /// levels \c O1, \c O2 and \c O3 resp.
-  ModulePassManager buildPerModuleDefaultPipeline(OptimizationLevel Level,
-                                                  bool LTOPreLink = false);
+  ModulePassManager buildPerModuleDefaultPipeline(
+      OptimizationLevel Level,
+      ThinOrFullLTOPhase Phase = ThinOrFullLTOPhase::None);
 
   /// Build a fat object default optimization pipeline.
   ///
@@ -295,8 +297,9 @@ public:
   /// Build an O0 pipeline with the minimal semantically required passes.
   ///
   /// This should only be used for non-LTO and LTO pre-link pipelines.
-  ModulePassManager buildO0DefaultPipeline(OptimizationLevel Level,
-                                           bool LTOPreLink = false);
+  ModulePassManager
+  buildO0DefaultPipeline(OptimizationLevel Level,
+                         ThinOrFullLTOPhase Phase = ThinOrFullLTOPhase::None);
 
   /// Build the default `AAManager` with the default alias analysis pipeline
   /// registered.
@@ -387,6 +390,10 @@ public:
   /// the \p AA manager is unspecified if such an error is encountered and this
   /// returns false.
   Error parseAAPipeline(AAManager &AA, StringRef PipelineText);
+
+  /// Parse RegAllocFilterName to get RegAllocFilterFunc.
+  std::optional<RegAllocFilterFunc>
+  parseRegAllocFilter(StringRef RegAllocFilterName);
 
   /// Print pass names.
   void printPassNames(raw_ostream &OS);
@@ -576,6 +583,14 @@ public:
   }
   /// @}}
 
+  /// Register callbacks to parse target specific filter field if regalloc pass
+  /// needs it. E.g. AMDGPU requires regalloc passes can handle sgpr and vgpr
+  /// separately.
+  void registerRegClassFilterParsingCallback(
+      const std::function<RegAllocFilterFunc(StringRef)> &C) {
+    RegClassFilterParsingCallbacks.push_back(C);
+  }
+
   /// Register a callback for a top-level pipeline entry.
   ///
   /// If the PassManager type is not given at the top level of the pipeline
@@ -723,6 +738,7 @@ private:
                          bool AtomicCounterUpdate, std::string ProfileFile,
                          std::string ProfileRemappingFile,
                          IntrusiveRefCntPtr<vfs::FileSystem> FS);
+  void addPostPGOLoopRotation(ModulePassManager &MPM, OptimizationLevel Level);
 
   // Extension Point callbacks
   SmallVector<std::function<void(FunctionPassManager &, OptimizationLevel)>, 2>
@@ -791,6 +807,9 @@ private:
                                  ArrayRef<PipelineElement>)>,
               2>
       MachineFunctionPipelineParsingCallbacks;
+  // Callbacks to parse `filter` parameter in register allocation passes
+  SmallVector<std::function<RegAllocFilterFunc(StringRef)>, 2>
+      RegClassFilterParsingCallbacks;
 };
 
 /// This utility template takes care of adding require<> and invalidate<>
@@ -926,6 +945,10 @@ public:
     return Result();
   }
 };
+
+/// Common option used by multiple tools to print pipeline passes
+extern cl::opt<bool> PrintPipelinePasses;
+
 }
 
 #endif

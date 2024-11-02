@@ -1485,6 +1485,7 @@ llvm::json::Value toJSON(const InlayHintKind &Kind) {
     return 2;
   case InlayHintKind::Designator:
   case InlayHintKind::BlockEnd:
+  case InlayHintKind::DefaultArgument:
     // This is an extension, don't serialize.
     return nullptr;
   }
@@ -1525,6 +1526,8 @@ llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, InlayHintKind Kind) {
       return "designator";
     case InlayHintKind::BlockEnd:
       return "block-end";
+    case InlayHintKind::DefaultArgument:
+      return "default-argument";
     }
     llvm_unreachable("Unknown clang.clangd.InlayHintKind");
   };
